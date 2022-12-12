@@ -56,7 +56,8 @@ namespace ProductAPI.Controllers
 
 
 		[HttpDelete]
-		public async Task<object> DeleteProduct([FromBody] int id)
+		[Route("{id}")]
+		public async Task<object> DeleteProduct(int id)
 		{
 			var result = await _repository.DeleteProduct(id);
 			_responce.IsSucces = result;
