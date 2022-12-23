@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ProductAPI.Models.Dto;
 using ProductAPI.Repository;
@@ -18,6 +19,7 @@ namespace ProductAPI.Controllers
 			_responce = new ResponceDto();
 		}
 
+		[Authorize]
 		[HttpGet]
 		public async Task<object> GetProducts()
 		{
@@ -26,8 +28,8 @@ namespace ProductAPI.Controllers
 			return _responce;
 		}
 
-
-		[HttpGet]
+        [Authorize]
+        [HttpGet]
 		[Route("{id}")]
 		public async Task<object> GetProductById(int id)
 		{
@@ -36,8 +38,8 @@ namespace ProductAPI.Controllers
 			return _responce;
 		}
 
-
-		[HttpPost]
+        [Authorize]
+        [HttpPost]
 		public async Task<object> PostProduct([FromBody] ProductDto productDto)
 		{
 			var model = await _repository.CreateUpdateProduct(productDto);
@@ -45,7 +47,7 @@ namespace ProductAPI.Controllers
 			return _responce;
 		}
 
-
+		[Authorize]
 		[HttpPut]
 		public async Task<object> CreateUpdateProduct([FromBody] ProductDto productDto)
 		{
@@ -54,8 +56,8 @@ namespace ProductAPI.Controllers
 			return _responce;
 		}
 
-
-		[HttpDelete]
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
 		[Route("{id}")]
 		public async Task<object> DeleteProduct(int id)
 		{
