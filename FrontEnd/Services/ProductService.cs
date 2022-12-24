@@ -14,58 +14,58 @@ namespace FrontEnd.Services
 
 		public ResponceDto ResponceModel { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-		public async Task<T> CreateProductsAsync<T>(ProductDto productDto)
+		public async Task<T> CreateProductsAsync<T>(ProductDto productDto, string token)
 		{
 			return await SendAsync<T>(new ApiRequest
 			{
 				ApiType = StaticData.ApiType.POST,
 				Data = productDto,
 				Url = StaticData.ProductAPIBase + "/api/products",
-				AccessToken = ""
-			});
+				AccessToken = token
+            });
 		}
 
-		public async Task<T> DeleteProductsAsync<T>(int id)
+		public async Task<T> DeleteProductsAsync<T>(int id, string token)
 		{
 			return await SendAsync<T>(new ApiRequest
 			{
 				ApiType = StaticData.ApiType.DELETE,
 				Url = StaticData.ProductAPIBase + "/api/products/" + id.ToString(),
-				AccessToken = ""
-			});
+				AccessToken = token
+            });
 		}
 
 
-		public async Task<T> GetAllProductsAsync<T>()
+		public async Task<T> GetAllProductsAsync<T>(string token)
 		{
 			return await SendAsync<T>(new ApiRequest
 			{
 				ApiType = StaticData.ApiType.GET,
 				Url = StaticData.ProductAPIBase + "/api/products",
-				AccessToken = ""
-			});
+				AccessToken = token
+            });
 		}
 
-		public async Task<T> GetProductByIdAsync<T>(int id)
+		public async Task<T> GetProductByIdAsync<T>(int id, string token)
 		{
 			return await SendAsync<T>(new ApiRequest
 			{
 				ApiType = StaticData.ApiType.GET,
 				Url = StaticData.ProductAPIBase + "/api/products/" + id.ToString(),
-				AccessToken = ""
-			});
+				AccessToken = token
+            });
 		}
 
 
-		public async Task<T> UpdateProductsAsync<T>(ProductDto productDto)
+		public async Task<T> UpdateProductsAsync<T>(ProductDto productDto, string token)
 		{
 			return await SendAsync<T>(new ApiRequest
 			{
 				ApiType = StaticData.ApiType.PUT,
 				Data = productDto,
 				Url = StaticData.ProductAPIBase + "/api/products",
-				AccessToken = ""
-			});
+				AccessToken = token
+            });
 		}
 	}
 }

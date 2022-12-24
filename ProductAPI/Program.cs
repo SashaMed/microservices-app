@@ -85,6 +85,7 @@ namespace ProductAPI
 			app.ConfigureExceptionHandler();
 			app.UseHttpsRedirection();
 
+			app.UseAuthentication();
 			app.UseAuthorization();
 
 

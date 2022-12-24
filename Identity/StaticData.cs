@@ -39,8 +39,8 @@ namespace Identity
                 ClientId = "mango",
                 ClientSecrets = { new Secret("secret".Sha256()) },
                 AllowedGrantTypes = GrantTypes.Code,
-                RedirectUris = { "https://localhost:44311/signin-oidc" },
-                PostLogoutRedirectUris = { "https://localhost:44311/signout-callback-oidc"  },
+                RedirectUris = { "https://localhost:44311/signin-oidc", "https://localhost:7123/signin-oidc" },
+                PostLogoutRedirectUris = { "https://localhost:44311/signout-callback-oidc","https://localhost:7123/signout-callback-oidc"  },
                 AllowedScopes = 
                 { 
                     IdentityServerConstants.StandardScopes.OpenId,

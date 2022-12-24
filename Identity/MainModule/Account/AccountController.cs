@@ -310,6 +310,10 @@ namespace IdentityServerHost.Quickstart.UI
             }
 
             // If we got this far, something failed, redisplay form
+            List<string> roles = new List<string>();
+            roles.Add("Admin");
+            roles.Add("Customer");
+            ViewBag.message = roles;
             return View(model);
         }
         private async Task<RegisterViewModel> BuildRegisterViewModelAsync(string returnUrl)
