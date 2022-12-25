@@ -1,6 +1,10 @@
 ﻿using FrontEnd.Models;
+using FrontEnd.Models.Dto;
+using FrontEnd.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace FrontEnd.Controllers
@@ -8,18 +12,40 @@ namespace FrontEnd.Controllers
 	public class HomeController : Controller
 	{
 		private readonly ILogger<HomeController> _logger;
+		private readonly IProductService _productService;
 
-		public HomeController(ILogger<HomeController> logger)
+		public HomeController(ILogger<HomeController> logger, IProductService productService)
 		{
 			_logger = logger;
+			_productService = productService;
 		}
 
-		public IActionResult Index()
+		public async Task<IActionResult> Index()
 		{
-			return View();
+			List<ProductDto> list = new();
+			var responce = await _productService.GetAllProductsAsync<ResponceDto>("");
+			if (responce != null && responce.IsSucces)
+			{
+				list = JsonConvert.DeserializeObject<List<ProductDto>>(Convert.ToString(responce.Result));
+			}
+			return View(list);
 		}
 
-		public IActionResult Privacy()
+		[Authorize]
+        public async Task<IActionResult> Details(int productId)
+        {
+            ProductDto model = new();
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var responce = await _productService.GetProductByIdAsync<ResponceDto>(productId, token);
+            if (responce != null && responce.IsSucces)
+            {
+                model = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(responce.Result));
+            }
+            return View(model);
+        }
+
+
+        public IActionResult Privacy()
 		{
 			return View();
 		}

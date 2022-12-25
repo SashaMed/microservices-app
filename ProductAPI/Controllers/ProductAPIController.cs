@@ -19,7 +19,7 @@ namespace ProductAPI.Controllers
 			_responce = new ResponceDto();
 		}
 
-		[Authorize]
+		//[Authorize]
 		[HttpGet]
 		public async Task<object> GetProducts()
 		{
