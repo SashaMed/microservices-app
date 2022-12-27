@@ -28,7 +28,7 @@ namespace ProductAPI.Controllers
 			return _responce;
 		}
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
 		[Route("{id}")]
 		public async Task<object> GetProductById(int id)

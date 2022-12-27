@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace ShoppingCartAPI.Models.Dtos
+﻿namespace FrontEnd.Models.Dto
 {
     public class CartDetailsDto
     {
@@ -17,6 +14,5 @@ namespace ShoppingCartAPI.Models.Dtos
         public virtual ProductDto Product { get; set; }
 
         public int Count { get; set; }
-
     }
 }

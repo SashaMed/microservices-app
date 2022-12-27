@@ -13,11 +13,13 @@ namespace FrontEnd.Controllers
 	{
 		private readonly ILogger<HomeController> _logger;
 		private readonly IProductService _productService;
+		private readonly ICartService _cartService;
 
-		public HomeController(ILogger<HomeController> logger, IProductService productService)
+		public HomeController(ILogger<HomeController> logger, IProductService productService, ICartService cartService)
 		{
 			_logger = logger;
 			_productService = productService;
+			_cartService = cartService;
 		}
 
 		public async Task<IActionResult> Index()
@@ -44,6 +46,44 @@ namespace FrontEnd.Controllers
             return View(model);
         }
 
+        [HttpPost]
+        [ActionName("Details")]
+        [Authorize]
+        public async Task<IActionResult> DetailsPost(ProductDto productDto)
+        {
+			var cartDto = new CartDto
+			{
+				CartHeader = new CartHeaderDto()
+				{
+					UserId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault()?.Value
+				}
+				
+			};
+			var cartDetailsDto = new CartDetailsDto
+			{
+				Count = productDto.Count,
+				ProductId = productDto.ProductId
+			};
+
+			var resp = await _productService.GetProductByIdAsync<ResponceDto>(productDto.ProductId, "");
+			if (resp != null && resp.IsSucces)
+			{
+				cartDetailsDto.Product = JsonConvert.DeserializeObject<ProductDto>(Convert.ToString(resp.Result));
+			}
+
+			List<CartDetailsDto> cartDetails= new List<CartDetailsDto>();
+			cartDetails.Add(cartDetailsDto);
+			cartDto.CartDetails = cartDetails;
+
+            var token = await HttpContext.GetTokenAsync("access_token");
+			var addToCartRes = await _cartService.AddToCartAsync<ResponceDto>(cartDto, token);
+            if (addToCartRes != null && addToCartRes.IsSucces)
+            {
+				return RedirectToAction(nameof(Index));
+            }
+			ModelState.AddModelError(string.Empty, "Cant add product to shopping cart");
+            return View(productDto);
+        }
 
         public IActionResult Privacy()
 		{

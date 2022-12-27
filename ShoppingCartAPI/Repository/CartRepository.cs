@@ -34,7 +34,7 @@ namespace ShoppingCartAPI.Repository
 
         public async Task<CartDto> CreateUpdateCart(CartDto cartDto)
         {
-            var cart = _mapper.Map<CartDto>(cartDto);
+            var cart = _mapper.Map<Cart>(cartDto);
             var prodIdDb = await _context.Products
                 .FirstOrDefaultAsync(c => c.ProductId == cartDto.CartDetails.First().ProductId);
             if (prodIdDb == null)

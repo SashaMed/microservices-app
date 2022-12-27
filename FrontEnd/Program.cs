@@ -1,5 +1,6 @@
 using FrontEnd.Services;
 using FrontEnd.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
 
 namespace FrontEnd
 {
@@ -11,9 +12,12 @@ namespace FrontEnd
 
 			// Add services to the container.
 			builder.Services.AddHttpClient<IProductService, ProductService>();
-			StaticData.ProductAPIBase = builder.Configuration["ServicesUrls:ProductAPI"];
-			builder.Services.AddScoped<IProductService, ProductService>();
-			builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpClient<ICartService, CartService>();
+            StaticData.ProductAPIBase = builder.Configuration["ServicesUrls:ProductAPI"];
+            StaticData.ShoppingCartAPIBase = builder.Configuration["ServicesUrls:ShoppingCartAPI"];
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddControllersWithViews();
 
 			builder.Services.AddAuthentication(options =>
 			{
@@ -28,7 +32,9 @@ namespace FrontEnd
 					options.ClientId = "mango";
 					options.ClientSecret = "secret";
 					options.ResponseType = "code";
-					options.TokenValidationParameters.NameClaimType = "name";
+					options.ClaimActions.MapJsonKey("role", "role", "role");
+                    options.ClaimActions.MapJsonKey("sub", "sub", "sub");
+                    options.TokenValidationParameters.NameClaimType = "name";
 					options.TokenValidationParameters.RoleClaimType = "role";
 					options.Scope.Add("mango");
 					options.SaveTokens = true; 
