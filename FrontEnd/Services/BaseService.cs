@@ -31,7 +31,10 @@ namespace FrontEnd.Services
 				client.DefaultRequestHeaders.Clear();
 				if (apiRequest.Data != null)
 				{
-					message.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data), 
+					var json = JsonConvert.SerializeObject(apiRequest.Data);
+					var msg = new StringContent(JsonConvert.SerializeObject(apiRequest.Data),
+                        Encoding.UTF8, "application/json");
+                    message.Content = new StringContent(JsonConvert.SerializeObject(apiRequest.Data), 
 						Encoding.UTF8, "application/json"); 
 				}
 

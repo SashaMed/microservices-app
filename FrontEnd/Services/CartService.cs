@@ -21,9 +21,9 @@ namespace FrontEnd.Services
             {
                 ApiType = StaticData.ApiType.POST,
                 Data = cartDto,
-                Url = StaticData.ShoppingCartAPIBase + "/api/cart/AddCart",
+                Url = StaticData.ShoppingCartAPIBase + "/api/carts",
                 AccessToken = token
-            });
+            }) ;
         }
 
         public async Task<T> GetCartbyUserAsync<T>(string userId, string token = null)
@@ -31,7 +31,7 @@ namespace FrontEnd.Services
             return await SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticData.ApiType.GET,
-                Url = StaticData.ShoppingCartAPIBase + "/api/cart/" + userId,
+                Url = StaticData.ShoppingCartAPIBase + "/api/carts/" + userId,
                 AccessToken = token
             });
         }
@@ -41,8 +41,8 @@ namespace FrontEnd.Services
             return await SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticData.ApiType.POST,
-                Data = cartId,
-                Url = StaticData.ShoppingCartAPIBase + "/api/cart/RemoveCart",
+                //Data = cartId,
+                Url = StaticData.ShoppingCartAPIBase + $"/api/carts/{cartId.ToString()}",
                 AccessToken = token
             });
         }
@@ -51,9 +51,9 @@ namespace FrontEnd.Services
         {
             return await SendAsync<T>(new ApiRequest
             {
-                ApiType = StaticData.ApiType.POST,
+                ApiType = StaticData.ApiType.PUT,
                 Data = cartDto,
-                Url = StaticData.ShoppingCartAPIBase + "/api/cart/UpdateCart",
+                Url = StaticData.ShoppingCartAPIBase + "/api/carts",
                 AccessToken = token
             });
         }

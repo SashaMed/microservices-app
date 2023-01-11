@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ShoppingCartAPI.Models.Dtos;
 using ShoppingCartAPI.Repository.Abstract;
 
 namespace ShoppingCartAPI.Controllers
 {
-    [Route("api/cart")] 
+    [Route("api/carts")] 
     [ApiController]
     public class CartController : ControllerBase
     {
@@ -18,7 +19,7 @@ namespace ShoppingCartAPI.Controllers
             _responce = new ResponceDto();
         }
 
-        [HttpGet("GetCart/{userId}")]
+        [HttpGet("{userId}")]
         public async Task<ResponceDto> GetCart(string userId)
         {
             try
@@ -37,14 +38,15 @@ namespace ShoppingCartAPI.Controllers
 
 
 
-        [HttpPost("AddCart")]
-        public async Task<ResponceDto> AddCart(CartDto cartDto)
+        [HttpPost]
+        [Authorize]
+        public async Task<ResponceDto> AddCart([FromBody] CartDto cartDto)
         {
             try
             {
                 var result = await _cartRepository.CreateUpdateCart(cartDto);
                 _responce.Result = result;
-
+                //_responce.Result = new CartDto();
             }
             catch (Exception ex)
             {
@@ -55,7 +57,7 @@ namespace ShoppingCartAPI.Controllers
         }
 
 
-        [HttpPost("UpdateCart")]
+        [HttpPut]
         public async Task<ResponceDto> UpdateCart(CartDto cartDto)
         {
             try
@@ -73,8 +75,8 @@ namespace ShoppingCartAPI.Controllers
         }
 
 
-        [HttpPost("RemoveCart")]
-        public async Task<ResponceDto> RemoveCart([FromBody]int cartId)
+        [HttpPost("{cartId}")]
+        public async Task<ResponceDto> RemoveCart(int cartId)
         {
             try
             {
@@ -91,7 +93,7 @@ namespace ShoppingCartAPI.Controllers
         }
 
 
-        [HttpPost("ClearCart/{userId}")]
+        [HttpDelete("{userId}")]
         public async Task<ResponceDto> ClearCart(string userId)
         {
             try
