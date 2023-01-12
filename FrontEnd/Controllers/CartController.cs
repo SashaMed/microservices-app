@@ -11,11 +11,13 @@ namespace FrontEnd.Controllers
     {
         private readonly IProductService _productService;
         private readonly ICartService _cartService;
+        private readonly ICouponService _couponService;
 
-        public CartController(IProductService productService, ICartService cartService)
+        public CartController(IProductService productService, ICartService cartService, ICouponService couponService)
         {
             _productService = productService;
             _cartService = cartService;
+            _couponService = couponService;
         }
 
         [Authorize]
@@ -24,11 +26,38 @@ namespace FrontEnd.Controllers
             return View(await LoadCartDtoBasedOnLoggedUser());
         }
 
+        [HttpPost]
+        [ActionName("ApplyCoupon")]
+        public async Task<IActionResult> ApplyCoupon(CartDto cartDto)
+        {
+            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault().Value;
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var responce = await _cartService.ApplyCoupon<ResponceDto>(cartDto, token);
+            return RedirectToAction(nameof(CartIndex));
+        }
+
+
+        [HttpPost]
+        [ActionName("RemoveCoupon")]
+        public async Task<IActionResult> RemoveCoupon(CartDto cartDto)
+        {
+            var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault().Value;
+            var token = await HttpContext.GetTokenAsync("access_token");
+            var responce = await _cartService.RemoveCoupon<ResponceDto>(cartDto.CartHeader.UserId, token);
+            return RedirectToAction(nameof(CartIndex));
+        }
+
         public async Task<IActionResult> Remove(int cartDetailsId)
         {
             var token = await HttpContext.GetTokenAsync("access_token");
             var responce = await _cartService.RemoveFromCartAsync<ResponceDto>(cartDetailsId, token);
             return RedirectToAction(nameof(CartIndex));
+        }
+
+        [Authorize] 
+        public async Task<IActionResult> Checkout()
+        {
+            return View(await LoadCartDtoBasedOnLoggedUser());
         }
 
 
@@ -45,6 +74,15 @@ namespace FrontEnd.Controllers
 
             if (cartDto.CartHeader != null)
             {
+                if (!string.IsNullOrEmpty(cartDto.CartHeader.CouponCode)) 
+                {
+                    var couponResponce = await _couponService.GetCoupon<ResponceDto>(cartDto.CartHeader.CouponCode, token);
+                    if (couponResponce != null && couponResponce.IsSucces)
+                    {
+                        var coupon = JsonConvert.DeserializeObject<CouponDto>(Convert.ToString(couponResponce.Result));
+                        cartDto.CartHeader.DiscountTotal = coupon.DiscountAmount;
+                    }
+                }
                 cartDto.CartHeader.OrderTotal += CalculateOrderTotal(cartDto);
             }
 
@@ -58,6 +96,7 @@ namespace FrontEnd.Controllers
             {
                 sum += item.Product.Price * item.Product.Count;
             }
+            sum -= cartDto.CartHeader.DiscountTotal;
             return sum;
         }
     }

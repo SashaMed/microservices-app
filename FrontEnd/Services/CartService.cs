@@ -26,12 +26,33 @@ namespace FrontEnd.Services
             }) ;
         }
 
+        public async Task<T> ApplyCoupon<T>(CartDto cartDto, string token = null)
+        {
+            return await SendAsync<T>(new ApiRequest
+            {
+                ApiType = StaticData.ApiType.POST,
+                Data = cartDto,
+                Url = StaticData.ShoppingCartAPIBase + "/api/carts/apply-coupon",
+                AccessToken = token
+            });
+        }
+
         public async Task<T> GetCartbyUserAsync<T>(string userId, string token = null)
         {
             return await SendAsync<T>(new ApiRequest
             {
                 ApiType = StaticData.ApiType.GET,
                 Url = StaticData.ShoppingCartAPIBase + "/api/carts/" + userId,
+                AccessToken = token
+            });
+        }
+
+        public async Task<T> RemoveCoupon<T>(string userId, string token = null)
+        {
+            return await SendAsync<T>(new ApiRequest
+            {
+                ApiType = StaticData.ApiType.POST,
+                Url = StaticData.ShoppingCartAPIBase + $"/api/carts/remove-coupon/{userId}",
                 AccessToken = token
             });
         }

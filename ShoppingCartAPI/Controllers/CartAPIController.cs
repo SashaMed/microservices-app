@@ -8,12 +8,12 @@ namespace ShoppingCartAPI.Controllers
 {
     [Route("api/carts")] 
     [ApiController]
-    public class CartController : ControllerBase
+    public class CartAPIController : ControllerBase
     {
         private readonly ICartRepository _cartRepository;
         protected ResponceDto _responce;
 
-        public CartController(ICartRepository repository)
+        public CartAPIController(ICartRepository repository)
         {
             _cartRepository = repository;
             _responce = new ResponceDto();
@@ -46,7 +46,6 @@ namespace ShoppingCartAPI.Controllers
             {
                 var result = await _cartRepository.CreateUpdateCart(cartDto);
                 _responce.Result = result;
-                //_responce.Result = new CartDto();
             }
             catch (Exception ex)
             {
@@ -99,6 +98,42 @@ namespace ShoppingCartAPI.Controllers
             try
             {
                 var result = await _cartRepository.ClearCart(userId);
+                _responce.Result = result;
+
+            }
+            catch (Exception ex)
+            {
+                _responce.IsSucces = false;
+                _responce.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _responce;
+        }
+
+
+        [HttpPost("remove-coupon/{userId}")] 
+        public async Task<ResponceDto> RemoveCoupon(string userId)
+        {
+            try
+            {
+                var result = await _cartRepository.RemoveCoupon(userId);
+                _responce.Result = result;
+
+            }
+            catch (Exception ex)
+            {
+                _responce.IsSucces = false;
+                _responce.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _responce;
+        }
+
+
+        [HttpPost("apply-coupon")]
+        public async Task<ResponceDto> ApplyCoupon([FromBody] CartDto cartDto)
+        {
+            try
+            {
+                var result = await _cartRepository.ApplyCoupon(cartDto.CartHeader.UserId, cartDto.CartHeader.CouponCode);
                 _responce.Result = result;
 
             }

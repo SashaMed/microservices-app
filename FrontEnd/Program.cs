@@ -13,10 +13,13 @@ namespace FrontEnd
 			// Add services to the container.
 			builder.Services.AddHttpClient<IProductService, ProductService>();
             builder.Services.AddHttpClient<ICartService, CartService>();
+            builder.Services.AddHttpClient<ICouponService, CouponService>();
             StaticData.ProductAPIBase = builder.Configuration["ServicesUrls:ProductAPI"];
             StaticData.ShoppingCartAPIBase = builder.Configuration["ServicesUrls:ShoppingCartAPI"];
+            StaticData.CouponAPIBase = builder.Configuration["ServicesUrls:CouponAPI"];
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<ICartService, CartService>();
+            builder.Services.AddScoped<ICouponService, CouponService>();
             builder.Services.AddControllersWithViews();
 
 			builder.Services.AddAuthentication(options =>
