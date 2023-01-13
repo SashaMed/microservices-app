@@ -37,6 +37,17 @@ namespace FrontEnd.Services
             });
         }
 
+        public async Task<T> Checkout<T>(CartHeaderDto cartHeader, string token = null)
+        {
+            return await SendAsync<T>(new ApiRequest
+            {
+                ApiType = StaticData.ApiType.POST,
+                Data = cartHeader,
+                Url = StaticData.ShoppingCartAPIBase + "/api/carts/checkout",
+                AccessToken = token
+            });
+        }
+
         public async Task<T> GetCartbyUserAsync<T>(string userId, string token = null)
         {
             return await SendAsync<T>(new ApiRequest

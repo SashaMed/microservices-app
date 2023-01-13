@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ShoppingCartAPI.Messages;
 using ShoppingCartAPI.Models.Dtos;
 using ShoppingCartAPI.Repository.Abstract;
 
@@ -135,6 +136,30 @@ namespace ShoppingCartAPI.Controllers
             {
                 var result = await _cartRepository.ApplyCoupon(cartDto.CartHeader.UserId, cartDto.CartHeader.CouponCode);
                 _responce.Result = result;
+
+            }
+            catch (Exception ex)
+            {
+                _responce.IsSucces = false;
+                _responce.ErrorMessages = new List<string> { ex.ToString() };
+            }
+            return _responce;
+        }
+
+
+
+        [HttpPost("checkout")]
+        public async Task<object> Checkout([FromBody] CheckoutHeaderDto checkoutHeaderDto)
+        {
+            try
+            {
+                var cartDto = await _cartRepository.GetCartByUserId(checkoutHeaderDto.UserId);
+                if (cartDto == null)
+                {
+                    return BadRequest();
+                }
+                checkoutHeaderDto.CartDetails = cartDto.CartDetails;
+                
 
             }
             catch (Exception ex)

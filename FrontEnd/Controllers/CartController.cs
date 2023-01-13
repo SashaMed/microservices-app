@@ -61,6 +61,27 @@ namespace FrontEnd.Controllers
         }
 
 
+        public async Task<IActionResult> Confirmation()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Checkout(CartDto cartDto)
+        {
+            try
+            {
+                var token = await HttpContext.GetTokenAsync("access_token");
+                var responce = await _cartService.Checkout<ResponceDto>(cartDto.CartHeader, token);
+                return RedirectToAction(nameof(Confirmation));
+            }
+            catch (Exception ex)
+            {
+                return View(cartDto);
+            }
+        }
+
+
         private async Task<CartDto> LoadCartDtoBasedOnLoggedUser()
         {
             var userId = User.Claims.Where(u => u.Type == "sub")?.FirstOrDefault().Value;
